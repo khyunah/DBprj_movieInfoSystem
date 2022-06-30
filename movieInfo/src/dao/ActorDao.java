@@ -93,6 +93,7 @@ public class ActorDao implements IActorService {
 		int result = -1;
 		
 		try {
+			// personInfo 에 먼저 등록
 			preparedStatement = connection.prepareStatement(insertQuery);
 			preparedStatement.setString(1, dto.getActorName());
 			preparedStatement.setString(2, dto.getGender());
@@ -102,10 +103,24 @@ public class ActorDao implements IActorService {
 			preparedStatement.setString(6, dto.getMarriagePartner());
 			result = preparedStatement.executeUpdate();
 			System.out.println(result);
+			
+			String selectPersonInforQuery = "SELECT * FROM personInfo WHERE personName = ? AND height = ? ";
+			preparedStatement = connection.prepareStatement(selectPersonInforQuery);
+			preparedStatement.setString(1, dto.getActorName());
+			preparedStatement.setString(2, dto.getActorTall());
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			int personNum = 0;
+			
+			while (resultSet.next()) {
+				ActorInfoDto actorInfoDto = new ActorInfoDto();
+				actorInfoDto.setPersonNum(resultSet.getInt("personNum"));
+				personNum = actorInfoDto.getPersonNum();
+			}
 
 			insertQuery = "insert into actorInfo(personNum, 대표작품, 대표역할) values(?,?,?) ";
 			preparedStatement = connection.prepareStatement(insertQuery);
-			preparedStatement.setInt(1, dto.getPersonNum());
+			preparedStatement.setInt(1, personNum);
 			preparedStatement.setString(2, dto.getRepresentativeMovie());
 			preparedStatement.setString(3, dto.getRepresentativeRole());
 			result = preparedStatement.executeUpdate();
