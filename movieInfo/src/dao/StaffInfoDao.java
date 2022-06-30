@@ -27,7 +27,7 @@ public class StaffInfoDao implements IStaffService {
 	@Override
 	public Vector<StaffInfoDto> selectDirectorName(String searchWord) {
 		Vector<StaffInfoDto> selectDirectorNameDtos = new Vector<>();
-		String selectDirectorNameQuery = "select * from view_staffInfoAll where 이름 = ? ";
+		String selectDirectorNameQuery = "select * from view_staffInfoAll where personName = ? ";
 		try {
 			preparedStatement = connection.prepareStatement(selectDirectorNameQuery);
 			preparedStatement.setString(1, searchWord);
@@ -35,10 +35,10 @@ public class StaffInfoDao implements IStaffService {
 
 			while (resultSet.next()) {
 				StaffInfoDto dto = new StaffInfoDto();
-				dto.setDirectorName(resultSet.getString("이름"));
-				dto.setBirthYear(resultSet.getInt("출생년도"));
-				dto.setGender(resultSet.getString("주민등록성별"));
-				dto.setMarriagePartner(resultSet.getString("배우자"));
+				dto.setDirectorName(resultSet.getString("personName"));
+				dto.setBirthYear(resultSet.getInt("birthYear"));
+				dto.setGender(resultSet.getString("gender"));
+				dto.setMarriagePartner(resultSet.getString("marriegePartner"));
 				dto.setPersonNum(resultSet.getInt("personNum"));
 				dto.setRepresentativeWork(resultSet.getString("대표작품"));
 				dto.setStaffNum(resultSet.getInt("staffNum"));
@@ -63,10 +63,10 @@ public class StaffInfoDao implements IStaffService {
 
 			while (resultSet.next()) {
 				StaffInfoDto dto = new StaffInfoDto();
-				dto.setDirectorName(resultSet.getString("이름"));
-				dto.setBirthYear(resultSet.getInt("출생년도"));
-				dto.setGender(resultSet.getString("주민등록성별"));
-				dto.setMarriagePartner(resultSet.getString("배우자"));
+				dto.setDirectorName(resultSet.getString("personName"));
+				dto.setBirthYear(resultSet.getInt("birthYear"));
+				dto.setGender(resultSet.getString("gender"));
+				dto.setMarriagePartner(resultSet.getString("marriegePartner"));
 				dto.setPersonNum(resultSet.getInt("personNum"));
 				dto.setRepresentativeWork(resultSet.getString("대표작품"));
 				dto.setStaffNum(resultSet.getInt("staffNum"));
@@ -82,7 +82,7 @@ public class StaffInfoDao implements IStaffService {
 	@Override
 	public int insertStaffInfo(StaffInfoDto dto) {
 		
-		String insertQuery = "insert into personInfo(이름, 주민등록성별, 출생년도, 키, 몸무게, 배우자)" + " values(?,?,?,?,?,?)";
+		String insertQuery = "insert into personInfo(personName, gender, birthYear, height, weight, marriegePartner)" + " values(?,?,?,?,?,?)";
 		int result = -1;
 		
 		try {
@@ -98,7 +98,7 @@ public class StaffInfoDao implements IStaffService {
 			
 			// SELECT
 			// movieinfoNum을 조회하기 위함.
-			String selectQuery = "SELECT * FROM personInfo WHERE 이름 = ? AND 출생년도 = ?";
+			String selectQuery = "SELECT * FROM personInfo WHERE personName = ? AND birthYear = ?";
 			preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, dto.getDirectorName());
 			preparedStatement.setInt(2, dto.getBirthYear());
@@ -123,7 +123,7 @@ public class StaffInfoDao implements IStaffService {
 	@Override
 	public int updateStaffInfo(int staffInfoNum, StaffInfoDto dto) {
 		System.out.println("staffInfoNum : "+staffInfoNum);
-		String updateQuery = "UPDATE personinfo SET 이름 = ? , 주민등록성별 = ?, 출생년도=?, 배우자=? WHERE personNum = ? ";
+		String updateQuery = "UPDATE personinfo SET personName = ? , gender = ?, birthYear=?, marriegePartner=? WHERE personNum = ? ";
 		int result=-1;
 		try {
 			preparedStatement = connection.prepareStatement(updateQuery);
@@ -165,7 +165,7 @@ public class StaffInfoDao implements IStaffService {
 
 		try {
 			// 중복검사
-			String selectCheckQuery = "SELECT * FROM view_staffinfoall WHERE 이름 = ? and 출생년도 = ?";
+			String selectCheckQuery = "SELECT * FROM view_staffinfoall WHERE personName = ? and birthYear = ?";
 			preparedStatement = connection.prepareStatement(selectCheckQuery);
 			preparedStatement.setString(1, directorName);
 			preparedStatement.setInt(2, birthYear);

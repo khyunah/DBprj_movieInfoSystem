@@ -22,8 +22,7 @@ public class MovieInfoDao implements IMovieService {
 	}
 
 	/**
-	 * 영화이름 검색하기
-	 * SELECT MovieInfo
+	 * 영화이름 검색하기 SELECT MovieInfo
 	 */
 	@Override
 	public Vector<MovieInfoDto> selectMovieTitle(String searchWord) {
@@ -32,7 +31,7 @@ public class MovieInfoDao implements IMovieService {
 
 		try {
 
-			String selectMovieTitleQuery = "SELECT * FROM view_movieInfoALL WHERE 영화이름 = ? ";
+			String selectMovieTitleQuery = "SELECT * FROM view_movieInfoALL WHERE movieTitle = ? ";
 			preparedStatement = connection.prepareStatement(selectMovieTitleQuery);
 			preparedStatement.setString(1, searchWord);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -42,14 +41,14 @@ public class MovieInfoDao implements IMovieService {
 				MovieInfoDto dto = new MovieInfoDto();
 
 				dto.setMovieInfoNum(resultSet.getInt("movieinfoNum"));
-				dto.setMovieTitle(resultSet.getString("영화이름"));
-				dto.setDirectorName(resultSet.getString("감독"));
-				dto.setReleaseYear(resultSet.getInt("개봉연도"));
-				dto.setReleaseMonth(resultSet.getInt("개봉월"));
-				dto.setMoviePlot(resultSet.getString("줄거리"));
-				dto.setTotalIncome(resultSet.getInt("매출액"));
-				dto.setAudience(resultSet.getInt("관객수"));
-				dto.setRating(resultSet.getFloat("평점"));
+				dto.setMovieTitle(resultSet.getString("movieTitle"));
+				dto.setDirectorName(resultSet.getString("directorName"));
+				dto.setReleaseYear(resultSet.getInt("releaseYear"));
+				dto.setReleaseMonth(resultSet.getInt("releaseMonth"));
+				dto.setMoviePlot(resultSet.getString("moviePlot"));
+				dto.setTotalIncome(resultSet.getInt("totalIncome"));
+				dto.setAudience(resultSet.getInt("audience"));
+				dto.setRating(resultSet.getFloat("rating"));
 				dto.setReview1(resultSet.getString("review1"));
 				dto.setReview2(resultSet.getString("review2"));
 				dto.setReview3(resultSet.getString("review3"));
@@ -63,8 +62,7 @@ public class MovieInfoDao implements IMovieService {
 	}
 
 	/**
-	 * 영화정보 전체 조회하기
-	 * SELECT MovieInfo
+	 * 영화정보 전체 조회하기 SELECT MovieInfo
 	 */
 	@Override
 	public Vector<MovieInfoDto> selectAllMovieInfo() {
@@ -82,14 +80,14 @@ public class MovieInfoDao implements IMovieService {
 				MovieInfoDto dto = new MovieInfoDto();
 
 				dto.setMovieInfoNum(resultSet.getInt("movieinfoNum"));
-				dto.setMovieTitle(resultSet.getString("영화이름"));
-				dto.setDirectorName(resultSet.getString("감독"));
-				dto.setReleaseYear(resultSet.getInt("개봉연도"));
-				dto.setReleaseMonth(resultSet.getInt("개봉월"));
-				dto.setMoviePlot(resultSet.getString("줄거리"));
-				dto.setTotalIncome(resultSet.getInt("매출액"));
-				dto.setAudience(resultSet.getInt("관객수"));
-				dto.setRating(resultSet.getFloat("평점"));
+				dto.setMovieTitle(resultSet.getString("movieTitle"));
+				dto.setDirectorName(resultSet.getString("directorName"));
+				dto.setReleaseYear(resultSet.getInt("releaseYear"));
+				dto.setReleaseMonth(resultSet.getInt("releaseMonth"));
+				dto.setMoviePlot(resultSet.getString("moviePlot"));
+				dto.setTotalIncome(resultSet.getInt("totalIncome"));
+				dto.setAudience(resultSet.getInt("audience"));
+				dto.setRating(resultSet.getFloat("rating"));
 				dto.setReview1(resultSet.getString("review1"));
 				dto.setReview2(resultSet.getString("review2"));
 				dto.setReview3(resultSet.getString("review3"));
@@ -103,9 +101,7 @@ public class MovieInfoDao implements IMovieService {
 	}
 
 	/**
-	 * 영화정보 중복검사
-	 * SELECT MovieInfo 
-	 * MovieInfo의 INSERT기능 수행하기전 중복을 검사한다.
+	 * 영화정보 중복검사 SELECT MovieInfo MovieInfo의 INSERT기능 수행하기전 중복을 검사한다.
 	 */
 	@Override
 	public boolean selectMovieDoubleCheck(String movieTitle, String movieDirector) {
@@ -116,16 +112,16 @@ public class MovieInfoDao implements IMovieService {
 
 		try {
 			// 중복검사
-			String selectCheckQuery = "SELECT * FROM movieinfo WHERE 영화이름 = ? AND 감독 = ? ";
+			String selectCheckQuery = "SELECT * FROM movieinfo WHERE movieTitle = ? AND directorName = ? ";
 			preparedStatement = connection.prepareStatement(selectCheckQuery);
 			preparedStatement.setString(1, movieTitle);
 			preparedStatement.setString(2, movieDirector);
 			ResultSet checkRs = preparedStatement.executeQuery();
-			
+
 			while (checkRs.next()) {
 				movieinfoNumCheck = checkRs.getString("movieinfoNum");
 			}
-			
+
 			// 중복이 아니라면 INSERT
 			if (movieinfoNumCheck == null) {
 				doubleCheck = true;
@@ -137,8 +133,7 @@ public class MovieInfoDao implements IMovieService {
 	}
 
 	/**
-	 * 영화정보 추가하기 
-	 * INSERT MovieInfo
+	 * 영화정보 추가하기 INSERT MovieInfo
 	 */
 	@Override
 	public int insertMovieInfo(MovieInfoDto dto) {
@@ -148,7 +143,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// INSERT
 			// 테이블 - movieInfo / 영화이름, 감독
-			String insertQuery = "INSERT INTO movieInfo(영화이름, 감독) VALUES(?, ?)";
+			String insertQuery = "INSERT INTO movieInfo(movieTitle, directorName) VALUES(?, ?)";
 			preparedStatement = connection.prepareStatement(insertQuery);
 			preparedStatement.setString(1, dto.getMovieTitle());
 			preparedStatement.setString(2, dto.getDirectorName());
@@ -157,7 +152,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// SELECT
 			// movieinfoNum을 조회하기 위함.
-			String selectQuery = "SELECT * FROM movieinfo WHERE 영화이름 = ? AND 감독 = ?";
+			String selectQuery = "SELECT * FROM movieinfo WHERE movieTitle = ? AND directorName = ?";
 			preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, dto.getMovieTitle());
 			preparedStatement.setString(2, dto.getDirectorName());
@@ -170,7 +165,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// INSERT
 			// 테이블 - movieReleaseInfo / movieinfoNum, 개봉연도, 개봉월
-			insertQuery = "INSERT INTO movieReleaseInfo(movieinfoNum, 개봉연도, 개봉월) VALUES(?, ?, ?)";
+			insertQuery = "INSERT INTO movieReleaseInfo(movieinfoNum, releaseYear, releaseMonth) VALUES(?, ?, ?)";
 			preparedStatement = connection.prepareStatement(insertQuery);
 			preparedStatement.setInt(1, movieinfoNum);
 			preparedStatement.setInt(2, dto.getReleaseYear());
@@ -180,7 +175,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// INSERT
 			// 테이블 - movieplot / movieinfoNum, 줄거리
-			insertQuery = "INSERT INTO moviePlot(movieinfoNum, 줄거리) VALUES(?, ?)";
+			insertQuery = "INSERT INTO moviePlot(movieinfoNum, moviePlot) VALUES(?, ?)";
 			preparedStatement = connection.prepareStatement(insertQuery);
 			preparedStatement.setInt(1, movieinfoNum);
 			preparedStatement.setString(2, dto.getMoviePlot());
@@ -189,7 +184,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// INSERT
 			// 테이블 - moviereport / movieinfoNum, 매출액, 관객수, 평점, review1, review2, review3
-			insertQuery = "INSERT INTO movieReport(movieinfoNum, 매출액, 관객수, 평점, review1, review2, review3) VALUES(?, ?, ?, ?, ?, ?, ?)";
+			insertQuery = "INSERT INTO movieReport(movieinfoNum, totalIncome, audience, rating, review1, review2, review3) VALUES(?, ?, ?, ?, ?, ?, ?)";
 			preparedStatement = connection.prepareStatement(insertQuery);
 			preparedStatement.setInt(1, movieinfoNum);
 			preparedStatement.setInt(2, dto.getTotalIncome());
@@ -208,19 +203,18 @@ public class MovieInfoDao implements IMovieService {
 	}
 
 	/**
-	 * 영화정보 수정하기 
-	 * UPDATE MovieInfo
+	 * 영화정보 수정하기 UPDATE MovieInfo
 	 */
 	@Override
 	public int updateMovieInfo(int movieinfoNum, MovieInfoDto dto) {
-		
+
 		int result = -1;
-		
+
 		try {
 			// UPDATE
 			// 테이블 - movieInfo / 영화이름, 감독
 			System.out.println(movieinfoNum);
-			String updateQuery = "UPDATE movieinfo SET 영화이름 = ? , 감독 = ? WHERE movieinfoNum = ?";
+			String updateQuery = "UPDATE movieinfo SET movieTitle = ? , directorName = ? WHERE movieinfoNum = ?";
 			preparedStatement = connection.prepareStatement(updateQuery);
 			preparedStatement.setString(1, dto.getMovieTitle());
 			preparedStatement.setString(2, dto.getDirectorName());
@@ -231,7 +225,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// UPDATE
 			// 테이블 - movieReleaseInfo / movieinfoNum, 개봉연도, 개봉월
-			updateQuery = "UPDATE movieReleaseInfo SET 개봉연도 = ? , 개봉월 = ? WHERE movieinfoNum = ? ";
+			updateQuery = "UPDATE movieReleaseInfo SET releaseYear = ? , releaseMonth = ? WHERE movieinfoNum = ? ";
 			preparedStatement = connection.prepareStatement(updateQuery);
 			preparedStatement.setInt(1, dto.getReleaseYear());
 			preparedStatement.setInt(2, dto.getReleaseMonth());
@@ -241,7 +235,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// UPDATE
 			// 테이블 - movieplot / movieinfoNum, 줄거리
-			updateQuery = "UPDATE moviePlot SET 줄거리 = ? WHERE movieinfoNum = ? ";
+			updateQuery = "UPDATE moviePlot SET moviePlot = ? WHERE movieinfoNum = ? ";
 			preparedStatement = connection.prepareStatement(updateQuery);
 			preparedStatement.setString(1, dto.getMoviePlot());
 			preparedStatement.setInt(2, movieinfoNum);
@@ -250,7 +244,7 @@ public class MovieInfoDao implements IMovieService {
 
 			// UPDATE
 			// 테이블 - moviereport / movieinfoNum, 매출액, 관객수, 평점, review1, review2, review3
-			updateQuery = "UPDATE movieReport SET 매출액 = ? , 관객수 = ? , 평점 = ? , review1 = ? , review2 = ? , review3 = ? WHERE movieinfoNum = ? ";
+			updateQuery = "UPDATE movieReport SET totalIncome = ? , audience = ? , rating = ? , review1 = ? , review2 = ? , review3 = ? WHERE movieinfoNum = ? ";
 			preparedStatement = connection.prepareStatement(updateQuery);
 			preparedStatement.setInt(1, dto.getTotalIncome());
 			preparedStatement.setInt(2, dto.getAudience());
@@ -265,27 +259,26 @@ public class MovieInfoDao implements IMovieService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
 	/**
-	 * 영화정보 삭제하기
-	 * DELETE MovieInfo
+	 * 영화정보 삭제하기 DELETE MovieInfo
 	 */
 	@Override
 	public int deleteMovieInfo(int movieinfoNum) {
-		
+
 		int result = -1;
-		
+
 		try {
-			
+
 			// DELETE
 			String deleteQuery = "DELETE FROM movieinfo WHERE movieinfoNum = ? ";
 			preparedStatement = connection.prepareStatement(deleteQuery);
 			preparedStatement.setInt(1, movieinfoNum);
 			result = preparedStatement.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

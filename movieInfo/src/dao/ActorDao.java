@@ -28,7 +28,7 @@ public class ActorDao implements IActorService {
 
 		try {
 
-			String selectActorInforQuery = "SELECT * FROM view_actorInfoAll WHERE 이름 = ? ";
+			String selectActorInforQuery = "SELECT * FROM view_actorInfoAll WHERE personName = ? ";
 			preparedStatement = connection.prepareStatement(selectActorInforQuery);
 			preparedStatement.setString(1, searchWord);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -39,12 +39,12 @@ public class ActorDao implements IActorService {
 
 				dto.setRepresentativeMovie(resultSet.getString("대표작품"));
 				dto.setRepresentativeRole(resultSet.getString("대표역할"));
-				dto.setActorName(resultSet.getString("이름"));
-				dto.setBirthYear(resultSet.getString("출생년도"));
-				dto.setGender(resultSet.getString("주민등록성별"));
-				dto.setActorTall(resultSet.getString("키"));
-				dto.setActorWeight(resultSet.getString("몸무게"));
-				dto.setMarriagePartner(resultSet.getString("배우자"));
+				dto.setActorName(resultSet.getString("personName"));
+				dto.setBirthYear(resultSet.getString("birthYear"));
+				dto.setGender(resultSet.getString("gender"));
+				dto.setActorTall(resultSet.getString("height"));
+				dto.setActorWeight(resultSet.getString("weight"));
+				dto.setMarriagePartner(resultSet.getString("marriegePartner"));
 
 				selectActorInfordto.add(dto);
 			}
@@ -71,12 +71,12 @@ public class ActorDao implements IActorService {
 				dto1.setActorNum(resultSet.getInt("actorNum"));
 				dto1.setRepresentativeMovie(resultSet.getString("대표작품"));
 				dto1.setRepresentativeRole(resultSet.getString("대표역할"));
-				dto1.setActorName(resultSet.getString("이름"));
-				dto1.setBirthYear(resultSet.getString("출생년도"));
-				dto1.setGender(resultSet.getString("주민등록성별"));
-				dto1.setActorTall(resultSet.getString("키"));
-				dto1.setActorWeight(resultSet.getString("몸무게"));
-				dto1.setMarriagePartner(resultSet.getString("배우자"));
+				dto1.setActorName(resultSet.getString("personName"));
+				dto1.setBirthYear(resultSet.getString("birthYear"));
+				dto1.setGender(resultSet.getString("gender"));
+				dto1.setActorTall(resultSet.getString("height"));
+				dto1.setActorWeight(resultSet.getString("weight"));
+				dto1.setMarriagePartner(resultSet.getString("marriegePartner"));
 				dto1.setPersonNum(resultSet.getInt("personNum"));
 				dto.add(dto1);
 			}
@@ -89,7 +89,7 @@ public class ActorDao implements IActorService {
 	@Override
 	public int insertActorInfo(ActorInfoDto dto) {
 		
-		String insertQuery = "insert into personInfo(이름, 주민등록성별, 출생년도, 키, 몸무게, 배우자) values(?,?,?,?,?,?)";
+		String insertQuery = "insert into personInfo(personName, gender, birthYear, height, weight, marriegePartner) values(?,?,?,?,?,?)";
 		int result = -1;
 		
 		try {
@@ -125,7 +125,7 @@ public class ActorDao implements IActorService {
 		String actorInfoNumCheck = "";
 		try {
 			// 중복검사
-			String selectCheckQuery = "SELECT * FROM view_actorInfoAll WHERE 이름 = ?";
+			String selectCheckQuery = "SELECT * FROM view_actorInfoAll WHERE personName = ?";
 			preparedStatement = connection.prepareStatement(selectCheckQuery);
 			preparedStatement.setString(1, actorName);
 			ResultSet checkRs = preparedStatement.executeQuery();
@@ -186,7 +186,7 @@ public class ActorDao implements IActorService {
 		try {
 			// UPDATE
 			// 테이블 - personInfo / 이름, 주민등록성별, 키, 몸무게, 배우자
-			String updateQuery = "UPDATE personInfo SET 이름 = ? , 주민등록성별 = ? , 출생년도 = ? ,  키 = ? , 몸무게 = ?, 배우자 = ?WHERE personNum = ?";
+			String updateQuery = "UPDATE personInfo SET personName = ? , gender = ? , birthYear = ? ,  height = ? , weight = ?, marriegePartner = ?WHERE personNum = ?";
 			preparedStatement = connection.prepareStatement(updateQuery);
 			preparedStatement.setString(1, dto.getActorName());
 			preparedStatement.setString(2, dto.getGender());
