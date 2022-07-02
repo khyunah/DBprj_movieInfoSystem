@@ -411,7 +411,8 @@ public class MovieFrame extends JFrame implements ActionListener {
 				movieDtos.removeAllElements();
 
 				// 입력한 영화제목으로 검색하기
-				Vector<MovieInfoDto> selectMoviTitleResult = movieDao.selectMovieTitle(fldSearchMovie.getText());
+				String removeTrimTitle = fldSearchMovie.getText().replace(" ", "");
+				Vector<MovieInfoDto> selectMoviTitleResult = movieDao.selectMovieTitle(removeTrimTitle);
 
 				for (int i = 0; i < selectMoviTitleResult.size(); i++) {
 					movieDtos.add(selectMoviTitleResult.get(i));
@@ -499,7 +500,6 @@ public class MovieFrame extends JFrame implements ActionListener {
 		else if (e.getSource() == btnDeleteMovie) {
 
 			if (movieInfoList.getSelectedValue() == null) {
-				System.out.println("삭제할 데이터가 없습니다.");
 				JOptionPane.showMessageDialog(null, "삭제하려는 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else {
@@ -541,8 +541,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 					&& !movieInfoPanel.getFldReleaseYear().getText().equals("")
 					&& !movieInfoPanel.getFldReleaseMonth().getText().equals("")) {
 
-				boolean doubleCheck = movieDao.selectMovieDoubleCheck(movieInfoPanel.getFldMovieTitle().getText(),
-						movieInfoPanel.getFldDirectorName().getText());
+				String removeTrimMovieTitle = removeTrim(movieInfoPanel.getFldMovieTitle().getText());
+				String removeTrimDirectorName = removeTrim(movieInfoPanel.getFldDirectorName().getText());
+				
+				boolean doubleCheck = movieDao.selectMovieDoubleCheck(removeTrimMovieTitle,	removeTrimDirectorName);
 
 				// 중복이 아닐때 true
 				if (doubleCheck) {
@@ -584,18 +586,15 @@ public class MovieFrame extends JFrame implements ActionListener {
 				int updateCheck = movieDao.updateMovieInfo(movieinfoNum, dto);
 
 				if (updateCheck == 1) {
-
 					JOptionPane.showMessageDialog(null, "영화 정보 업데이트가 정상적으로 완료되었습니다.", "INFORMATION",
 							JOptionPane.INFORMATION_MESSAGE);
 					resetMovieInfoTextField();
 
 				} else {
-
 					JOptionPane.showMessageDialog(null, "영화 정보 업데이트가 정상적으로 처리되지 않았습니다", "ERROR",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
-
 				JOptionPane.showMessageDialog(null, "영화이름, 감독, 매출액, 관객수, 평점, 개봉연도, 개봉월은 빈칸없이 입력해주세요", "ERROR",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -611,8 +610,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 			} else {
 
 				vcActor.removeAllElements();
+				
+				String removeTrimActorName = removeTrim(fldSearchActor.getText());
 
-				Vector<ActorInfoDto> selectActorInfor = actorDao.selectActorInfor(fldSearchActor.getText());
+				Vector<ActorInfoDto> selectActorInfor = actorDao.selectActorInfor(removeTrimActorName);
 
 				for (int i = 0; i < selectActorInfor.size(); i++) {
 					vcActor.add(selectActorInfor.get(i));
@@ -661,8 +662,6 @@ public class MovieFrame extends JFrame implements ActionListener {
 		else if (e.getSource() == btnUpdateActor) {
 
 			if (actorjList.getSelectedValue() == null) {
-
-				System.out.println("업데이트 항목을 선택해주세요");
 				JOptionPane.showMessageDialog(null, "업데이트 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else if (actorjList.getSelectedValue() != null) {
@@ -694,15 +693,15 @@ public class MovieFrame extends JFrame implements ActionListener {
 		else if (e.getSource() == btnDeleteActor) {
 
 			if (actorjList.getSelectedValue() == null) {
-
-				System.out.println("삭제할 데이터가 없습니다.");
 				JOptionPane.showMessageDialog(null, "삭제하려는 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else {
 
 				if (vcActor.size() != 0) {
+					
+					String removeActorName = removeTrim(actorjList.getSelectedValue().getActorName());
 
-					boolean doubleCheck = actorDao.selectActorDoubleCheck(actorjList.getSelectedValue().getActorName());
+					boolean doubleCheck = actorDao.selectActorDoubleCheck(removeActorName);
 
 					if (!doubleCheck) {
 
@@ -715,12 +714,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 							actorjList.ensureIndexIsVisible(index);
 							actorjList.repaint();
 
-							System.out.println("삭제완료");
 							JOptionPane.showMessageDialog(null, "삭제가 완료되었습니다.", "INFORMATION",
 									JOptionPane.INFORMATION_MESSAGE);
 						}
 					} else {
-						System.out.println("삭제할 데이터가 없습니다.");
 						JOptionPane.showMessageDialog(null, "삭제하려는 정보가 존재하지 않습니다", "ERROR", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -746,28 +743,19 @@ public class MovieFrame extends JFrame implements ActionListener {
 					int insertCheck = actorDao.insertActorInfo(dto);
 
 					if (insertCheck == 1) {
-
-						System.out.println("배우정보 등록 완료");
 						JOptionPane.showMessageDialog(null, "배우정보 등록이 완료되었습니다.", "INFORMATION",
 								JOptionPane.INFORMATION_MESSAGE);
 
 						resetActorInfoTextField();
 
 					} else {
-
-						System.out.println("배우정보 등록 오류");
 						JOptionPane.showMessageDialog(null, "배우 정보 등록이 정상적으로 처리되지 않았습니다.", "ERROR",
 								JOptionPane.ERROR_MESSAGE);
-
 					}
-
 				} else {
-					System.out.println("입력하신 정보의 감독이 이미 존재합니다.");
-					JOptionPane.showMessageDialog(null, "입력하신 정보의 감독이 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "입력하신 정보의 배우가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
-
-				System.out.println("배우 이름을 입력해주세요");
 				JOptionPane.showMessageDialog(null, "배우 이름을 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -780,34 +768,28 @@ public class MovieFrame extends JFrame implements ActionListener {
 			int updateCheck = actorDao.updateActorInfo(actcorNum, dto);
 
 			if (updateCheck == 1) {
-
-				System.out.println("배우 정보 업데이트 완료");
 				JOptionPane.showMessageDialog(null, "배우 정보 업데이트가 완료되었습니다.", "INFORMATION",
 						JOptionPane.INFORMATION_MESSAGE);
 				resetActorInfoTextField();
 
 			} else {
-
-				System.out.println("배우 정보 업데이트 오류");
 				JOptionPane.showMessageDialog(null, "배우 정보 업데이트가 정상적으로 처리되지 않았습니다", "ERROR", JOptionPane.ERROR_MESSAGE);
-
 			}
-
 		}
 
 		// Staff Search 버튼
 		else if (e.getSource() == btnSearchStaff) {
 
 			if (fldSearchMovie.getText().equals("")) {
-
-				System.out.println("스태프 이름을 입력해주세요");
 				JOptionPane.showMessageDialog(null, "스태프 이름을 입력해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else {
 
 				vcStaff.removeAllElements();
 
-				Vector<StaffInfoDto> selectDirectorNameResult = staffDao.selectDirectorName(fldSearchStaff.getText());
+				String removeTrimStaffName = removeTrim(fldSearchStaff.getText());
+				
+				Vector<StaffInfoDto> selectDirectorNameResult = staffDao.selectDirectorName(removeTrimStaffName);
 
 				for (int i = 0; i < selectDirectorNameResult.size(); i++) {
 					vcStaff.add(selectDirectorNameResult.get(i));
@@ -857,8 +839,6 @@ public class MovieFrame extends JFrame implements ActionListener {
 		else if (e.getSource() == btnUpdateStaff) {
 
 			if (staffJlist.getSelectedValue() == null) {
-
-				System.out.println("업데이트 항목을 선택해주세요");
 				JOptionPane.showMessageDialog(null, "수정하려는 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else if (staffJlist.getSelectedValue() != null) {
@@ -890,17 +870,16 @@ public class MovieFrame extends JFrame implements ActionListener {
 		else if (e.getSource() == btnDeleteStaff) {
 
 			if (staffJlist.getSelectedValue() == null) {
-
-				System.out.println("삭제할 데이터가 없습니다.");
 				JOptionPane.showMessageDialog(null, "삭제하려는 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else {
 
 				if (vcStaff.size() != 0) {
 
+					String rempceTrimDirectorName = removeTrim(staffJlist.getSelectedValue().getDirectorName());
+					
 					boolean doubleCheck = staffDao.selectStaffInfoDoubleCheck(
-							staffJlist.getSelectedValue().getDirectorName(),
-							staffJlist.getSelectedValue().getBirthYear());
+							rempceTrimDirectorName, staffJlist.getSelectedValue().getBirthYear());
 
 					if (!doubleCheck) {
 
@@ -913,15 +892,12 @@ public class MovieFrame extends JFrame implements ActionListener {
 							staffJlist.ensureIndexIsVisible(index);
 							staffJlist.repaint();
 
-							System.out.println("삭제완료");
 							JOptionPane.showMessageDialog(null, "삭제가 완료되었습니다.", "INFORMATION",
 									JOptionPane.INFORMATION_MESSAGE);
 
 						}
 					}
 				} else {
-
-					System.out.println("삭제할 데이터가 없습니다.");
 					JOptionPane.showMessageDialog(null, "삭제하려는 정보가 존재하지 않습니다", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 				}
@@ -937,8 +913,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 					&& !staffInfoPanel.getFldGender().getText().equals("")
 					&& !staffInfoPanel.getFldMarriagePartner().getText().equals("")
 					&& !staffInfoPanel.getFldRepresentativeWork().getText().equals("")) {
+				
+				String removeTrimDirectorName = removeTrim(staffInfoPanel.getFldDirectorName().getText());
 
-				boolean doubleCheck = staffDao.selectStaffInfoDoubleCheck(staffInfoPanel.getFldDirectorName().getText(),
+				boolean doubleCheck = staffDao.selectStaffInfoDoubleCheck(removeTrimDirectorName,
 						Integer.parseInt(staffInfoPanel.getFldBirthYear().getText()));
 
 				if (doubleCheck) {
@@ -948,20 +926,14 @@ public class MovieFrame extends JFrame implements ActionListener {
 					int insertCheck = staffDao.insertStaffInfo(dto);
 
 					if (insertCheck == 1) {
-
-						System.out.println("등록 완료");
 						JOptionPane.showMessageDialog(null, "등록이 완료되었습니다.", "INFORMATION",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 
 				} else {
-					System.out.println("입력하신 감독정보가 이미 존재합니다.");
 					JOptionPane.showMessageDialog(null, "입력하신 감독정보가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
-
 			} else {
-
-				System.out.println("빈칸을 전부 입력해주세요");
 				JOptionPane.showMessageDialog(null, "빈칸을 전부 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -980,26 +952,21 @@ public class MovieFrame extends JFrame implements ActionListener {
 				int updateCheck = staffDao.updateStaffInfo(staffinfoNum, dto);
 
 				if (updateCheck == 1) {
-
-					System.out.println("업데이트 완료");
 					JOptionPane.showMessageDialog(null, "업데이트가 완료되었습니다.", "INFORMATION",
 							JOptionPane.INFORMATION_MESSAGE);
 					resetStaffInfoTextField();
 
 				} else {
-
-					System.out.println("업데이트 오류");
 					JOptionPane.showMessageDialog(null, "업데이트가 정상적으로 처리되지 않았습니다", "ERROR", JOptionPane.ERROR_MESSAGE);
-
 				}
-
 			} else {
-
-				System.out.println("빈칸을 전부 입력해주세요");
 				JOptionPane.showMessageDialog(null, "빈칸을 전부 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
-
 			}
 		}
+	}
+	
+	private String removeTrim(String keyword) {
+		return keyword.replace(" ", "");
 	}
 
 	// MovieInfo 정보를 MovieInfoDto로 밀어 넣는 메소드 ( insert, update 에서 사용 )

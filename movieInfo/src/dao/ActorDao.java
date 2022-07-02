@@ -28,7 +28,7 @@ public class ActorDao implements IActorService {
 
 		try {
 
-			String selectActorInforQuery = "SELECT * FROM view_actorInfoAll WHERE personName = ? ";
+			String selectActorInforQuery = "SELECT * FROM view_actorInfoAll WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' ";
 			preparedStatement = connection.prepareStatement(selectActorInforQuery);
 			preparedStatement.setString(1, searchWord);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -104,10 +104,12 @@ public class ActorDao implements IActorService {
 			result = preparedStatement.executeUpdate();
 			System.out.println(result);
 			
-			String selectPersonInforQuery = "SELECT * FROM personInfo WHERE personName = ? AND height = ? ";
+			String selectPersonInforQuery = "SELECT * FROM personInfo "
+					+ "WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' "
+					+ "AND REPLACE(birthYear, ' ', '') LIKE '%' ? '%' ";
 			preparedStatement = connection.prepareStatement(selectPersonInforQuery);
 			preparedStatement.setString(1, dto.getActorName());
-			preparedStatement.setString(2, dto.getActorTall());
+			preparedStatement.setString(2, dto.getBirthYear());
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			int personNum = 0;
@@ -137,21 +139,19 @@ public class ActorDao implements IActorService {
 
 		// 중복 체크변수
 		boolean doubleCheck = false;
-		String actorInfoNumCheck = "";
+		int actorInfoNumCheck = -1;
 		try {
 			// 중복검사
-			String selectCheckQuery = "SELECT * FROM view_actorInfoAll WHERE personName = ?";
+			String selectCheckQuery = "SELECT * FROM view_actorInfoAll WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' AND  ";
 			preparedStatement = connection.prepareStatement(selectCheckQuery);
 			preparedStatement.setString(1, actorName);
 			ResultSet checkRs = preparedStatement.executeQuery();
 
 			while (checkRs.next()) {
-
-				actorInfoNumCheck = checkRs.getString("actorNum");
-
+				actorInfoNumCheck = checkRs.getInt("actorNum");
 			}
 			
-			if (actorInfoNumCheck == null) {
+			if (actorInfoNumCheck != -1) {
 				doubleCheck = true;
 			}
 			
@@ -170,7 +170,7 @@ public class ActorDao implements IActorService {
 
 			// SELECT
 			// 선택한 영화가 몇번인지
-			String selectQuery = "SELECT * FROM view_actorInfoAll WHERE personNum = ? ";
+			String selectQuery = "SELECT * FROM view_actorInfoAll WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' ";
 			preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personNum);
 

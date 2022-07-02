@@ -27,7 +27,7 @@ public class StaffInfoDao implements IStaffService {
 	@Override
 	public Vector<StaffInfoDto> selectDirectorName(String searchWord) {
 		Vector<StaffInfoDto> selectDirectorNameDtos = new Vector<>();
-		String selectDirectorNameQuery = "select * from view_staffInfoAll where personName = ? ";
+		String selectDirectorNameQuery = "SELECT * FROM view_staffInfoAll WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' ";
 		try {
 			preparedStatement = connection.prepareStatement(selectDirectorNameQuery);
 			preparedStatement.setString(1, searchWord);
@@ -82,7 +82,7 @@ public class StaffInfoDao implements IStaffService {
 	@Override
 	public int insertStaffInfo(StaffInfoDto dto) {
 		
-		String insertQuery = "insert into personInfo(personName, gender, birthYear, height, weight, marriegePartner)" + " values(?,?,?,?,?,?)";
+		String insertQuery = "INSERT INTO personInfo(personName, gender, birthYear, height, weight, marriegePartner) VALUES(?, ?, ?, ?, ?, ?)";
 		int result = -1;
 		
 		try {
@@ -98,7 +98,7 @@ public class StaffInfoDao implements IStaffService {
 			
 			// SELECT
 			// movieinfoNum을 조회하기 위함.
-			String selectQuery = "SELECT * FROM personInfo WHERE personName = ? AND birthYear = ?";
+			String selectQuery = "SELECT * FROM personInfo WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' AND birthYear = ? ";
 			preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, dto.getDirectorName());
 			preparedStatement.setInt(2, dto.getBirthYear());
@@ -108,7 +108,7 @@ public class StaffInfoDao implements IStaffService {
 				personNum = resultSet.getInt("personNum");
 			}
 	
-			insertQuery = "insert into staffInfo(personNum,대표작품) values(?,?) ";
+			insertQuery = "INSERT INTO staffInfo(personNum, 대표작품) VALUES(?, ?) ";
 			preparedStatement = connection.prepareStatement(insertQuery);
 			preparedStatement.setInt(1,personNum);
 			preparedStatement.setString(2,dto.getRepresentativeWork());
@@ -122,7 +122,7 @@ public class StaffInfoDao implements IStaffService {
 
 	@Override
 	public int updateStaffInfo(int staffInfoNum, StaffInfoDto dto) {
-		System.out.println("staffInfoNum : "+staffInfoNum);
+
 		String updateQuery = "UPDATE personinfo SET personName = ? , gender = ?, birthYear=?, marriegePartner=? WHERE personNum = ? ";
 		int result=-1;
 		try {
@@ -133,7 +133,7 @@ public class StaffInfoDao implements IStaffService {
 			preparedStatement.setString(4, dto.getMarriagePartner());
 			preparedStatement.setInt(5, dto.getPersonNum());
 			result = preparedStatement.executeUpdate();
-			System.out.println("result : "+result);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -143,16 +143,14 @@ public class StaffInfoDao implements IStaffService {
 			preparedStatement.setString(1, dto.getRepresentativeWork());
 			preparedStatement.setInt(2, staffInfoNum);
 			result = preparedStatement.executeUpdate();
-		System.out.println("result : "+result);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("result: " + result);
+
 		return result;
-
 	}
-
-			
+		
 
 	/**
 	 * SELECT staff 중복검사 INSERT, DELETE 기능 수행하기전 중복을 검사한다.
@@ -165,28 +163,27 @@ public class StaffInfoDao implements IStaffService {
 
 		try {
 			// 중복검사
-			String selectCheckQuery = "SELECT * FROM view_staffinfoall WHERE personName = ? and birthYear = ?";
+			String selectCheckQuery = "SELECT * FROM view_staffinfoall WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' AND birthYear = ?";
 			preparedStatement = connection.prepareStatement(selectCheckQuery);
 			preparedStatement.setString(1, directorName);
 			preparedStatement.setInt(2, birthYear);
 
 			ResultSet checkRs = preparedStatement.executeQuery();
-			String staffInfoNumCheck = null;
+			int staffInfoNumCheck = -1;
+			
 			while (checkRs.next()) {
-
-			 staffInfoNumCheck = checkRs.getString("staffNum");
+			 staffInfoNumCheck = checkRs.getInt("staffNum");
 			}
-			System.out.println("test");
 			
 			// 중복이 아니라면 INSERT
-			if (staffInfoNumCheck == null) {
+			if (staffInfoNumCheck == -1) {
 				doubleCheck = true; //
 				System.out.println(doubleCheck);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(doubleCheck); //false뜨네
+
 		return doubleCheck;
 	}
 	

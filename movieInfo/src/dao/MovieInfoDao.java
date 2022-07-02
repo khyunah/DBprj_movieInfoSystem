@@ -31,7 +31,7 @@ public class MovieInfoDao implements IMovieService {
 
 		try {
 
-			String selectMovieTitleQuery = "SELECT * FROM view_movieInfoALL WHERE movieTitle = ? ";
+			String selectMovieTitleQuery = "SELECT * FROM view_movieInfoALL WHERE REPLACE(movieTitle, ' ', '') LIKE '%' ? '%' ";
 			preparedStatement = connection.prepareStatement(selectMovieTitleQuery);
 			preparedStatement.setString(1, searchWord);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -112,7 +112,9 @@ public class MovieInfoDao implements IMovieService {
 
 		try {
 			// 중복검사
-			String selectCheckQuery = "SELECT * FROM movieinfo WHERE movieTitle = ? AND directorName = ? ";
+			String selectCheckQuery = "SELECT * FROM movieinfo " 
+					+ "WHERE REPLACE(movieTitle, ' ', '') LIKE '%' ? '%' "
+					+ "AND REPLACE(directorName, ' ', '') LIKE '%' ? '%' ";
 			preparedStatement = connection.prepareStatement(selectCheckQuery);
 			preparedStatement.setString(1, movieTitle);
 			preparedStatement.setString(2, movieDirector);
@@ -152,7 +154,9 @@ public class MovieInfoDao implements IMovieService {
 
 			// SELECT
 			// movieinfoNum을 조회하기 위함.
-			String selectQuery = "SELECT * FROM movieinfo WHERE movieTitle = ? AND directorName = ?";
+			String selectQuery = "SELECT * FROM movieinfo "
+					+ "WHERE REPLACE(movieTitle, ' ', '') LIKE '%' ? '%' "
+					+ "AND REPLACE(directorName, ' ', '') LIKE '%' ? '%' ";
 			preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setString(1, dto.getMovieTitle());
 			preparedStatement.setString(2, dto.getDirectorName());
