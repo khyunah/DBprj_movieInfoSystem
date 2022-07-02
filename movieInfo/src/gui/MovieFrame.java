@@ -540,15 +540,15 @@ public class MovieFrame extends JFrame implements ActionListener {
 		// MovieInfoPanel - 영화정보 등록하기 버튼
 		else if (e.getSource() == movieInfoPanel.getBtnInsertMovieInfo()) {
 			
-//			&& !movieInfoPanel.getFldDirectorName().getText().equals("")
-//			&& !movieInfoPanel.getFldTotalIncome().getText().equals("")
-//			&& !movieInfoPanel.getFldAudience().getText().equals("")
-//			&& !movieInfoPanel.getFldRating().getText().equals("")
-//			&& !movieInfoPanel.getFldReleaseYear().getText().equals("")
+
 			// 패널에 있는 텍스트 필드에 전부 입력을 했는지 체크하는 과정
 			
 			if (!movieInfoPanel.getFldMovieTitle().getText().equals("")
-
+					&& !movieInfoPanel.getFldDirectorName().getText().equals("")
+					&& !movieInfoPanel.getFldTotalIncome().getText().equals("")
+					&& !movieInfoPanel.getFldAudience().getText().equals("")
+					&& !movieInfoPanel.getFldRating().getText().equals("")
+					&& !movieInfoPanel.getFldReleaseYear().getText().equals("")
 					&& !movieInfoPanel.getFldReleaseMonth().getText().equals("")) {
 
 				String removeTrimMovieTitle = removeTrim(movieInfoPanel.getFldMovieTitle().getText());
@@ -566,6 +566,7 @@ public class MovieFrame extends JFrame implements ActionListener {
 					if (insertCheck == 1) {
 						JOptionPane.showMessageDialog(null, "영화 정보 등록이 정상적으로 완료되었습니다.", "Information",
 								JOptionPane.INFORMATION_MESSAGE);
+						resetMovieInfoTextField();
 					} else {
 						JOptionPane.showMessageDialog(null, "영화 정보 등록이 정상적으로 처리되지 않았습니다.", "ERROR",
 								JOptionPane.ERROR_MESSAGE);
@@ -957,6 +958,7 @@ public class MovieFrame extends JFrame implements ActionListener {
 					if (insertCheck == 1) {
 						JOptionPane.showMessageDialog(null, "등록이 완료되었습니다.", "INFORMATION",
 								JOptionPane.INFORMATION_MESSAGE);
+						resetStaffInfoTextField();
 					}
 
 				} else {
