@@ -56,8 +56,8 @@ public class MovieFrame extends JFrame implements ActionListener {
 	private JButton btnUpdateMovie;
 	private JButton btnInsertMovie;
 
-	private Vector<MovieInfoDto> movieDtos = new Vector<>();
-	private JList<MovieInfoDto> movieInfoList = new JList<>();
+	private Vector<MovieInfoDto> vcMovie = new Vector<>();
+	private JList<MovieInfoDto> movieInfoJList = new JList<>();
 
 	// 배우 패널 부분
 	private JPanel actorPanel;
@@ -74,7 +74,7 @@ public class MovieFrame extends JFrame implements ActionListener {
 	private JButton btnAllActorSearch;
 
 	private Vector<ActorInfoDto> vcActor = new Vector<>();
-	private JList<ActorInfoDto> actorjList = new JList<>();
+	private JList<ActorInfoDto> actorJList = new JList<>();
 
 	// 스태프 패널 부분
 	private JPanel staffPanel;
@@ -149,9 +149,9 @@ public class MovieFrame extends JFrame implements ActionListener {
 		movieTextArea.setBounds(12, 88, 573, 222);
 		movieScrollPane.add(movieTextArea);
 
-		movieInfoList = new JList<>();
-		movieInfoList.setBounds(12, 88, 573, 222);
-		movieTextArea.add(movieInfoList);
+		movieInfoJList = new JList<>();
+		movieInfoJList.setBounds(12, 88, 573, 222);
+		movieTextArea.add(movieInfoJList);
 
 		btnMovieSearch = new JButton("Search");
 		btnMovieSearch.setBounds(622, 48, 100, 25);
@@ -199,9 +199,9 @@ public class MovieFrame extends JFrame implements ActionListener {
 		lblActorInfo.setBounds(38, 21, 147, 36);
 		actorPanel.add(lblActorInfo);
 
-		actorjList = new JList<>();
-		actorjList.setBounds(38, 98, 253, 151);
-		actorScrollPane.add(actorjList);
+		actorJList = new JList<>();
+		actorJList.setBounds(38, 98, 253, 151);
+		actorScrollPane.add(actorJList);
 
 		btnAllActorSearch = new JButton("Search All");
 		btnAllActorSearch.setBackground(Color.WHITE);
@@ -306,16 +306,16 @@ public class MovieFrame extends JFrame implements ActionListener {
 				}
 			}
 		});
-		movieInfoList.addMouseListener(new MouseAdapter() {
+		movieInfoJList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 				if (e.getClickCount() == 2) {
-					MovieInfoDto dto = movieInfoList.getSelectedValue();
+					MovieInfoDto dto = movieInfoJList.getSelectedValue();
 					new MovieInfoDetailFrame(dto);
 
 					// 선택되어진 밸류 없애는 코드
-					movieInfoList.setSelectedValue(null, false);
+					movieInfoJList.setSelectedValue(null, false);
 				}
 			}
 		});
@@ -343,15 +343,15 @@ public class MovieFrame extends JFrame implements ActionListener {
 				}
 			}
 		});
-		actorjList.addMouseListener(new MouseAdapter() {
+		actorJList.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 				if (e.getClickCount() == 2) {
-					ActorInfoDto dto = actorjList.getSelectedValue();
+					ActorInfoDto dto = actorJList.getSelectedValue();
 					new ActorInforDetailFrame(dto);
-					actorjList.setSelectedValue(null, false);
+					actorJList.setSelectedValue(null, false);
 				}
 			}
 		});
@@ -408,42 +408,44 @@ public class MovieFrame extends JFrame implements ActionListener {
 			} else {
 
 				// 현재 리스트에 있는 데이터 없애기
-				movieDtos.removeAllElements();
+				vcMovie.removeAllElements();
 
 				// 입력한 영화제목으로 검색하기
 				String removeTrimTitle = fldSearchMovie.getText().replace(" ", "");
 				Vector<MovieInfoDto> selectMoviTitleResult = movieDao.selectMovieTitle(removeTrimTitle);
 
 				for (int i = 0; i < selectMoviTitleResult.size(); i++) {
-					movieDtos.add(selectMoviTitleResult.get(i));
+					vcMovie.add(selectMoviTitleResult.get(i));
 				}
 
-				movieInfoList.setListData(movieDtos);
-				movieScrollPane.add(movieInfoList);
+				movieInfoJList.setListData(vcMovie);
+				movieScrollPane.add(movieInfoJList);
 
-				movieInfoList.setSelectedValue(null, false);
+				movieInfoJList.setSelectedValue(null, false);
 			}
 		}
 
 		// Movie Search All 버튼
 		else if (e.getSource() == btnAllMovieSearch) {
 
-			movieDtos.removeAllElements();
+			vcMovie.removeAllElements();
 
 			Vector<MovieInfoDto> selectAllMovieInfoResult = movieDao.selectAllMovieInfo();
 
 			for (int i = 0; i < selectAllMovieInfoResult.size(); i++) {
-				movieDtos.add(selectAllMovieInfoResult.get(i));
+				vcMovie.add(selectAllMovieInfoResult.get(i));
 			}
 
-			movieInfoList.setListData(movieDtos);
-			movieScrollPane.add(movieInfoList);
+			movieInfoJList.setListData(vcMovie);
+			movieScrollPane.add(movieInfoJList);
 
-			movieInfoList.setSelectedValue(null, false);
+			movieInfoJList.setSelectedValue(null, false);
 		}
 
 		// Movie Insert 버튼
 		else if (e.getSource() == btnInsertMovie) {
+			
+			resetMovieInfoTextField();
 
 			if(jtab.getTabCount() == 2) {
 				jtab.removeTabAt(1);
@@ -457,22 +459,22 @@ public class MovieFrame extends JFrame implements ActionListener {
 			movieInfoPanel.getBtnUpdateMovieInfo().setEnabled(false);
 			movieInfoPanel.getBtnInsertMovieInfo().setEnabled(true);
 
-			movieInfoList.setSelectedValue(null, false);
+			movieInfoJList.setSelectedValue(null, false);
 
 		}
 
 		// Movie Update 버튼
 		else if (e.getSource() == btnUpdateMovie) {
 
-			if (movieInfoList.getSelectedValue() == null) {
+			if (movieInfoJList.getSelectedValue() == null) {
 				JOptionPane.showMessageDialog(null, "수정하려는 영화 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
-			} else if (movieInfoList.getSelectedValue() != null) {
+			} else if (movieInfoJList.getSelectedValue() != null) {
 
 				movieInfoPanel.getBtnUpdateMovieInfo().setEnabled(true);
 				movieInfoPanel.getBtnInsertMovieInfo().setEnabled(false);
 
-				MovieInfoDto dto = movieInfoList.getSelectedValue();
+				MovieInfoDto dto = movieInfoJList.getSelectedValue();
 
 				movieInfoPanel.getFldMovieTitle().setText(dto.getMovieTitle());
 				movieInfoPanel.getFldDirectorName().setText(dto.getDirectorName());
@@ -491,7 +493,7 @@ public class MovieFrame extends JFrame implements ActionListener {
 
 				movieinfoNum = dto.getMovieInfoNum();
 
-				movieInfoList.setSelectedValue(null, false);
+				movieInfoJList.setSelectedValue(null, false);
 				
 				if(jtab.getTabCount() == 2) {
 					jtab.removeTabAt(1);
@@ -505,14 +507,14 @@ public class MovieFrame extends JFrame implements ActionListener {
 		// Movie Delete 버튼
 		else if (e.getSource() == btnDeleteMovie) {
 
-			if (movieInfoList.getSelectedValue() == null) {
+			if (movieInfoJList.getSelectedValue() == null) {
 				JOptionPane.showMessageDialog(null, "삭제하려는 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else {
 
-				if (movieDtos.size() != 0) {
+				if (vcMovie.size() != 0) {
 
-					int movieinfoNum = movieInfoList.getSelectedValue().getMovieInfoNum();
+					int movieinfoNum = movieInfoJList.getSelectedValue().getMovieInfoNum();
 
 					// DB에서 데이터 삭제
 					int deleteCheck = movieDao.deleteMovieInfo(movieinfoNum);
@@ -520,9 +522,9 @@ public class MovieFrame extends JFrame implements ActionListener {
 					if (deleteCheck == 1) {
 
 						// 보여지는 화면 JList에서 삭제
-						int index = movieInfoList.getSelectedIndex();
-						movieDtos.remove(index);
-						movieInfoList.repaint();
+						int index = movieInfoJList.getSelectedIndex();
+						vcMovie.remove(index);
+						movieInfoJList.repaint();
 
 						JOptionPane.showMessageDialog(null, "영화 정보 삭제가 완료되었습니다.", "INFORMATION",
 								JOptionPane.INFORMATION_MESSAGE);
@@ -532,21 +534,21 @@ public class MovieFrame extends JFrame implements ActionListener {
 					}
 				}
 			}
-			movieInfoList.setSelectedValue(null, false);
+			movieInfoJList.setSelectedValue(null, false);
 		}
 
 		// MovieInfoPanel - 영화정보 등록하기 버튼
 		else if (e.getSource() == movieInfoPanel.getBtnInsertMovieInfo()) {
 			
-			resetMovieInfoTextField();
-
+//			&& !movieInfoPanel.getFldDirectorName().getText().equals("")
+//			&& !movieInfoPanel.getFldTotalIncome().getText().equals("")
+//			&& !movieInfoPanel.getFldAudience().getText().equals("")
+//			&& !movieInfoPanel.getFldRating().getText().equals("")
+//			&& !movieInfoPanel.getFldReleaseYear().getText().equals("")
 			// 패널에 있는 텍스트 필드에 전부 입력을 했는지 체크하는 과정
+			
 			if (!movieInfoPanel.getFldMovieTitle().getText().equals("")
-					&& !movieInfoPanel.getFldDirectorName().getText().equals("")
-					&& !movieInfoPanel.getFldTotalIncome().getText().equals("")
-					&& !movieInfoPanel.getFldAudience().getText().equals("")
-					&& !movieInfoPanel.getFldRating().getText().equals("")
-					&& !movieInfoPanel.getFldReleaseYear().getText().equals("")
+
 					&& !movieInfoPanel.getFldReleaseMonth().getText().equals("")) {
 
 				String removeTrimMovieTitle = removeTrim(movieInfoPanel.getFldMovieTitle().getText());
@@ -627,10 +629,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 					vcActor.add(selectActorInfor.get(i));
 				}
 
-				actorjList.setListData(vcActor);
-				actorScrollPane.add(actorjList);
+				actorJList.setListData(vcActor);
+				actorScrollPane.add(actorJList);
 
-				actorjList.setSelectedValue(null, false);
+				actorJList.setSelectedValue(null, false);
 			}
 		}
 
@@ -645,10 +647,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 				vcActor.add(selectAllActorInfoResult.get(i));
 			}
 
-			actorjList.setListData(vcActor);
-			actorScrollPane.add(actorjList);
+			actorJList.setListData(vcActor);
+			actorScrollPane.add(actorJList);
 
-			actorjList.setSelectedValue(null, false);
+			actorJList.setSelectedValue(null, false);
 		}
 
 		// Actor Insert 버튼
@@ -666,22 +668,22 @@ public class MovieFrame extends JFrame implements ActionListener {
 			jtab.addTab("Actor", null, actorInfoPanel, null);
 			jtab.setSelectedComponent(actorInfoPanel);
 
-			actorjList.setSelectedValue(null, false);
+			actorJList.setSelectedValue(null, false);
 
 		}
 
 		// Actor Update 버튼
 		else if (e.getSource() == btnUpdateActor) {
 
-			if (actorjList.getSelectedValue() == null) {
+			if (actorJList.getSelectedValue() == null) {
 				JOptionPane.showMessageDialog(null, "업데이트 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
-			} else if (actorjList.getSelectedValue() != null) {
+			} else if (actorJList.getSelectedValue() != null) {
 
 				actorInfoPanel.getBtnUpdateActorInfo().setEnabled(true);
 				actorInfoPanel.getBtnInsertActorInfo().setEnabled(false);
 
-				ActorInfoDto dto = actorjList.getSelectedValue();
+				ActorInfoDto dto = actorJList.getSelectedValue();
 
 				actorInfoPanel.getFldActorName().setText(dto.getActorName());
 				actorInfoPanel.getFldActorRepresentativeMovie().setText(dto.getRepresentativeMovie());
@@ -701,35 +703,35 @@ public class MovieFrame extends JFrame implements ActionListener {
 				jtab.addTab("Actor", null, actorInfoPanel, null);
 				jtab.setSelectedComponent(actorInfoPanel);
 
-				actorjList.setSelectedValue(null, false);
+				actorJList.setSelectedValue(null, false);
 			}
 		}
 
 		// Actor Delete 버튼
 		else if (e.getSource() == btnDeleteActor) {
 
-			if (actorjList.getSelectedValue() == null) {
+			if (actorJList.getSelectedValue() == null) {
 				JOptionPane.showMessageDialog(null, "삭제하려는 항목을 선택해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 
 			} else {
 
 				if (vcActor.size() != 0) {
 					
-					String removeActorName = removeTrim(actorjList.getSelectedValue().getActorName());
-					int actorBirthYear = Integer.parseInt(actorjList.getSelectedValue().getBirthYear());
+					String removeActorName = removeTrim(actorJList.getSelectedValue().getActorName());
+					int actorBirthYear = Integer.parseInt(actorJList.getSelectedValue().getBirthYear());
 
 					boolean doubleCheck = actorDao.selectActorDoubleCheck(removeActorName, actorBirthYear);
 
 					if (!doubleCheck) {
 
-						int deleteCheck = actorDao.deleteActorInfo(actorjList.getSelectedValue().getPersonNum());
+						int deleteCheck = actorDao.deleteActorInfo(actorJList.getSelectedValue().getPersonNum());
 
 						if (deleteCheck == 1) {
 
-							int index = actorjList.getSelectedIndex();
+							int index = actorJList.getSelectedIndex();
 							vcActor.remove(index);
-							actorjList.ensureIndexIsVisible(index);
-							actorjList.repaint();
+							actorJList.ensureIndexIsVisible(index);
+							actorJList.repaint();
 
 							JOptionPane.showMessageDialog(null, "삭제가 완료되었습니다.", "INFORMATION",
 									JOptionPane.INFORMATION_MESSAGE);
@@ -739,13 +741,11 @@ public class MovieFrame extends JFrame implements ActionListener {
 					}
 				}
 			}
-			actorjList.setSelectedValue(null, false);
+			actorJList.setSelectedValue(null, false);
 		}
 
 		// ActorInfoPanel - 배우정보 등록하기 버튼
 		else if (e.getSource() == actorInfoPanel.getBtnInsertActorInfo()) {
-			
-			resetActorInfoTextField();
 
 			if (!actorInfoPanel.getFldActorName().getText().equals("")
 					&& !actorInfoPanel.getFldActorGender().getText().equals("")
@@ -845,7 +845,7 @@ public class MovieFrame extends JFrame implements ActionListener {
 		// Staff Insert 버튼
 		else if (e.getSource() == btnInsertStaff) {
 
-			resetMovieInfoTextField();
+			resetStaffInfoTextField();
 
 			staffInfoPanel.getBtnInsertStaffInfo().setEnabled(true);
 			staffInfoPanel.getBtnUpdateStaffInfo().setEnabled(false);
@@ -937,13 +937,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 
 		// StaffInfoPanel - 스태프 정보 추가 부분
 		else if (e.getSource() == staffInfoPanel.getBtnInsertStaffInfo()) {
-			
-			resetStaffInfoTextField();
 
 			if (!staffInfoPanel.getFldBirthYear().getText().equals("")
 					&& !staffInfoPanel.getFldDirectorName().getText().equals("")
 					&& !staffInfoPanel.getFldGender().getText().equals("")
-					&& !staffInfoPanel.getFldMarriagePartner().getText().equals("")
 					&& !staffInfoPanel.getFldRepresentativeWork().getText().equals("")) {
 				
 				String removeTrimDirectorName = removeTrim(staffInfoPanel.getFldDirectorName().getText());

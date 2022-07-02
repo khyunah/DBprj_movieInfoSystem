@@ -171,7 +171,7 @@ public class ActorDao implements IActorService {
 
 			// SELECT
 			// 선택한 영화가 몇번인지
-			String selectQuery = "SELECT * FROM view_actorInfoAll WHERE REPLACE(personName, ' ', '') LIKE '%' ? '%' AND birthYear ";
+			String selectQuery = "SELECT * FROM view_actorInfoAll WHERE personNum = ? ";
 			preparedStatement = connection.prepareStatement(selectQuery);
 			preparedStatement.setInt(1, personNum);
 
