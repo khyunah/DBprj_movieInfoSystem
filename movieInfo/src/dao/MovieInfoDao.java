@@ -150,7 +150,6 @@ public class MovieInfoDao implements IMovieService {
 			preparedStatement.setString(1, dto.getMovieTitle());
 			preparedStatement.setString(2, dto.getDirectorName());
 			result = preparedStatement.executeUpdate();
-			System.out.println(result);
 
 			// SELECT
 			// movieinfoNum을 조회하기 위함.
@@ -164,7 +163,6 @@ public class MovieInfoDao implements IMovieService {
 			int movieinfoNum = 0;
 			while (resultSet.next()) {
 				movieinfoNum = resultSet.getInt("movieinfoNum");
-				System.out.println(movieinfoNum);// "movieinfoNum"
 			}
 
 			// INSERT
@@ -175,7 +173,6 @@ public class MovieInfoDao implements IMovieService {
 			preparedStatement.setInt(2, dto.getReleaseYear());
 			preparedStatement.setInt(3, dto.getReleaseMonth());
 			result = preparedStatement.executeUpdate();
-			System.out.println(result);
 
 			// INSERT
 			// 테이블 - movieplot / movieinfoNum, 줄거리
@@ -184,7 +181,6 @@ public class MovieInfoDao implements IMovieService {
 			preparedStatement.setInt(1, movieinfoNum);
 			preparedStatement.setString(2, dto.getMoviePlot());
 			result = preparedStatement.executeUpdate();
-			System.out.println(result);
 
 			// INSERT
 			// 테이블 - moviereport / movieinfoNum, 매출액, 관객수, 평점, review1, review2, review3
@@ -198,7 +194,6 @@ public class MovieInfoDao implements IMovieService {
 			preparedStatement.setString(6, dto.getReview2());
 			preparedStatement.setString(7, dto.getReview3());
 			result = preparedStatement.executeUpdate();
-			System.out.println(result);
 
 		} catch (SQLException e) {
 			e.printStackTrace();

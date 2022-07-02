@@ -12,7 +12,7 @@ public interface IActorService {
 	
 	int insertActorInfo(ActorInfoDto dto);
 
-	boolean selectActorDoubleCheck(String actorName);
+	boolean selectActorDoubleCheck(String actorName, int birthYear);
 
 	int deleteActorInfo(int personN);
 	

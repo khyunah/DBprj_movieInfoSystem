@@ -445,7 +445,9 @@ public class MovieFrame extends JFrame implements ActionListener {
 		// Movie Insert 버튼
 		else if (e.getSource() == btnInsertMovie) {
 
-			jtab.removeTabAt(1);
+			if(jtab.getTabCount() == 2) {
+				jtab.removeTabAt(1);
+			}
 
 			jtab.addTab("Moive", null, movieInfoPanel, null);
 
@@ -490,6 +492,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 				movieinfoNum = dto.getMovieInfoNum();
 
 				movieInfoList.setSelectedValue(null, false);
+				
+				if(jtab.getTabCount() == 2) {
+					jtab.removeTabAt(1);
+				}
 
 				jtab.addTab("Movie", null, movieInfoPanel, null);
 				jtab.setSelectedComponent(movieInfoPanel);
@@ -531,6 +537,8 @@ public class MovieFrame extends JFrame implements ActionListener {
 
 		// MovieInfoPanel - 영화정보 등록하기 버튼
 		else if (e.getSource() == movieInfoPanel.getBtnInsertMovieInfo()) {
+			
+			resetMovieInfoTextField();
 
 			// 패널에 있는 텍스트 필드에 전부 입력을 했는지 체크하는 과정
 			if (!movieInfoPanel.getFldMovieTitle().getText().equals("")
@@ -650,6 +658,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 
 			actorInfoPanel.getBtnUpdateActorInfo().setEnabled(false);
 			actorInfoPanel.getBtnInsertActorInfo().setEnabled(true);
+			
+			if(jtab.getTabCount() == 2) {
+				jtab.removeTabAt(1);
+			}
 
 			jtab.addTab("Actor", null, actorInfoPanel, null);
 			jtab.setSelectedComponent(actorInfoPanel);
@@ -681,6 +693,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 				actorInfoPanel.getFldActorGender().setText(dto.getGender());
 
 				actcorNum = dto.getActorNum();
+				
+				if(jtab.getTabCount() == 2) {
+					jtab.removeTabAt(1);
+				}
 
 				jtab.addTab("Actor", null, actorInfoPanel, null);
 				jtab.setSelectedComponent(actorInfoPanel);
@@ -700,8 +716,9 @@ public class MovieFrame extends JFrame implements ActionListener {
 				if (vcActor.size() != 0) {
 					
 					String removeActorName = removeTrim(actorjList.getSelectedValue().getActorName());
+					int actorBirthYear = Integer.parseInt(actorjList.getSelectedValue().getBirthYear());
 
-					boolean doubleCheck = actorDao.selectActorDoubleCheck(removeActorName);
+					boolean doubleCheck = actorDao.selectActorDoubleCheck(removeActorName, actorBirthYear);
 
 					if (!doubleCheck) {
 
@@ -727,6 +744,8 @@ public class MovieFrame extends JFrame implements ActionListener {
 
 		// ActorInfoPanel - 배우정보 등록하기 버튼
 		else if (e.getSource() == actorInfoPanel.getBtnInsertActorInfo()) {
+			
+			resetActorInfoTextField();
 
 			if (!actorInfoPanel.getFldActorName().getText().equals("")
 					&& !actorInfoPanel.getFldActorGender().getText().equals("")
@@ -734,7 +753,10 @@ public class MovieFrame extends JFrame implements ActionListener {
 					&& !actorInfoPanel.getFldatorTall().getText().equals("")
 					&& !actorInfoPanel.getFldActorWieght().getText().equals("")) {
 
-				boolean doubleCheck = actorDao.selectActorDoubleCheck(actorInfoPanel.getFldActorName().getText());
+				String removeTrimActorName = actorInfoPanel.getFldActorName().getText();
+				int actorBirthYear = Integer.parseInt(actorInfoPanel.getFldActorBirthYear().getText());
+				
+				boolean doubleCheck = actorDao.selectActorDoubleCheck(removeTrimActorName, actorBirthYear);
 
 				if (!doubleCheck) {
 
@@ -828,7 +850,11 @@ public class MovieFrame extends JFrame implements ActionListener {
 			staffInfoPanel.getBtnInsertStaffInfo().setEnabled(true);
 			staffInfoPanel.getBtnUpdateStaffInfo().setEnabled(false);
 
-			jtab.addTab("insert", null, staffInfoPanel, null);
+			if(jtab.getTabCount() == 2) {
+				jtab.removeTabAt(1);
+			}
+			
+			jtab.addTab("Staff", null, staffInfoPanel, null);
 			jtab.setSelectedComponent(staffInfoPanel);
 
 			staffJlist.setSelectedValue(null, false);
@@ -858,8 +884,12 @@ public class MovieFrame extends JFrame implements ActionListener {
 				personInfoNum = dto.getPersonNum();
 
 				staffJlist.setSelectedValue(null, false);
+				
+				if(jtab.getTabCount() == 2) {
+					jtab.removeTabAt(1);
+				}
 
-				jtab.addTab("update", null, staffInfoPanel, null);
+				jtab.addTab("Staff", null, staffInfoPanel, null);
 				jtab.setSelectedComponent(staffInfoPanel);
 
 			}
@@ -907,6 +937,8 @@ public class MovieFrame extends JFrame implements ActionListener {
 
 		// StaffInfoPanel - 스태프 정보 추가 부분
 		else if (e.getSource() == staffInfoPanel.getBtnInsertStaffInfo()) {
+			
+			resetStaffInfoTextField();
 
 			if (!staffInfoPanel.getFldBirthYear().getText().equals("")
 					&& !staffInfoPanel.getFldDirectorName().getText().equals("")
