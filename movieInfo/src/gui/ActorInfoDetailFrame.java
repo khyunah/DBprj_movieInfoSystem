@@ -7,7 +7,7 @@ import javax.swing.JTextField;
 
 import dto.ActorInfoDto;
 
-public class ActorInforDetailFrame {
+public class ActorInfoDetailFrame {
 	private JFrame frame;
 	private JTextField fldActorName;
 	private JTextField fldActorBirthYear;
@@ -17,7 +17,7 @@ public class ActorInforDetailFrame {
 	private JTextField fldActorWeight;
 	private JTextField fldActormarriagePartner;
 
-	public ActorInforDetailFrame(ActorInfoDto dto) {
+	public ActorInfoDetailFrame(ActorInfoDto dto) {
 		initData(dto);
 	}
 
