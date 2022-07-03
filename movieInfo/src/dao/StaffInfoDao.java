@@ -177,8 +177,7 @@ public class StaffInfoDao implements IStaffService {
 			
 			// 중복이 아니라면 INSERT
 			if (staffInfoNumCheck == -1) {
-				doubleCheck = true; //
-				System.out.println(doubleCheck);
+				doubleCheck = true; 
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -152,7 +152,7 @@ public class ActorDao implements IActorService {
 				actorInfoNumCheck = checkRs.getInt("actorNum");
 			}
 			
-			if (actorInfoNumCheck != -1) {
+			if (actorInfoNumCheck == -1) {
 				doubleCheck = true;
 			}
 			

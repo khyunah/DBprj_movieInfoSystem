@@ -392,21 +392,27 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 	
 	// MovieInfo 정보를 MovieInfoDto로 밀어 넣는 메소드 ( insert, update 에서 사용 )
 	private void addDtoMovieInfo(MovieInfoDto dto) {
-		dto.setMovieTitle(movieFormPanel.getFldMovieTitle().getText());
-		dto.setDirectorName(movieFormPanel.getFldDirectorName().getText());
+		try {
+			dto.setMovieTitle(movieFormPanel.getFldMovieTitle().getText());
+			dto.setDirectorName(movieFormPanel.getFldDirectorName().getText());
 
-		dto.setReleaseYear(Integer.parseInt(movieFormPanel.getFldReleaseYear().getText()));
-		dto.setReleaseMonth(Integer.parseInt(movieFormPanel.getFldReleaseMonth().getText()));
+			dto.setReleaseYear(Integer.parseInt(movieFormPanel.getFldReleaseYear().getText()));
+			dto.setReleaseMonth(Integer.parseInt(movieFormPanel.getFldReleaseMonth().getText()));
 
-		dto.setMoviePlot(movieFormPanel.getFldMoviePlot().getText());
+			dto.setMoviePlot(movieFormPanel.getFldMoviePlot().getText());
 
-		dto.setTotalIncome(Integer.parseInt(movieFormPanel.getFldTotalIncome().getText()));
-		dto.setAudience(Integer.parseInt(movieFormPanel.getFldAudience().getText()));
-		dto.setRating(Float.parseFloat((movieFormPanel.getFldRating().getText())));
+			dto.setTotalIncome(Integer.parseInt(movieFormPanel.getFldTotalIncome().getText()));
+			dto.setAudience(Integer.parseInt(movieFormPanel.getFldAudience().getText()));
+			dto.setRating(Float.parseFloat((movieFormPanel.getFldRating().getText())));
 
-		dto.setReview1(movieFormPanel.getFldReview1().getText());
-		dto.setReview2(movieFormPanel.getFldReview2().getText());
-		dto.setReview3(movieFormPanel.getFldReview3().getText());
+			dto.setReview1(movieFormPanel.getFldReview1().getText());
+			dto.setReview2(movieFormPanel.getFldReview2().getText());
+			dto.setReview3(movieFormPanel.getFldReview3().getText());
+		} catch(NumberFormatException n) {
+			JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		
 	}
 
 }

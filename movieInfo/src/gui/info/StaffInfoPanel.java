@@ -49,6 +49,8 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 	
 	public StaffInfoPanel(MovieInfoMainFrame context) {
 		this.context = context;
+		initData();
+		addEventListener();
 	}
 	
 	private void initData() {
@@ -288,24 +290,29 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 				
 				String removeTrimDirectorName = removeTrim(staffFormPanel.getFldDirectorName().getText());
 
-				boolean doubleCheck = staffDao.selectStaffInfoDoubleCheck(removeTrimDirectorName,
-						Integer.parseInt(staffFormPanel.getFldBirthYear().getText()));
+				boolean doubleCheck = false;
+				try {
+					doubleCheck = staffDao.selectStaffInfoDoubleCheck(removeTrimDirectorName,
+							Integer.parseInt(staffFormPanel.getFldBirthYear().getText()));
+					if (doubleCheck) {
 
-				if (doubleCheck) {
+						StaffInfoDto dto = new StaffInfoDto();
+						addDtoStaffInfo(dto);
+						int insertCheck = staffDao.insertStaffInfo(dto);
 
-					StaffInfoDto dto = new StaffInfoDto();
-					addDtoStaffInfo(dto);
-					int insertCheck = staffDao.insertStaffInfo(dto);
+						if (insertCheck == 1) {
+							JOptionPane.showMessageDialog(null, "등록이 완료되었습니다.", "INFORMATION",
+									JOptionPane.INFORMATION_MESSAGE);
+							resetStaffInfoTextField();
+						}
 
-					if (insertCheck == 1) {
-						JOptionPane.showMessageDialog(null, "등록이 완료되었습니다.", "INFORMATION",
-								JOptionPane.INFORMATION_MESSAGE);
-						resetStaffInfoTextField();
+					} else {
+						JOptionPane.showMessageDialog(null, "입력하신 감독정보가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
 					}
-
-				} else {
-					JOptionPane.showMessageDialog(null, "입력하신 감독정보가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
+				} catch(NumberFormatException n) {
+					JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
+				
 			} else {
 				JOptionPane.showMessageDialog(null, "빈칸을 전부 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 			}
@@ -344,16 +351,21 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 
 	// StaffInfo 정보를 StaffInfoDto로 밀어 넣는 메소드 ( insert, update 에서 사용 )
 	private void addDtoStaffInfo(StaffInfoDto dto) {
-		dto.setStaffNum(staffinfoNum);
-		dto.setPersonNum(personInfoNum);
-		dto.setDirectorName(staffFormPanel.getFldDirectorName().getText());
+		try {
+			dto.setStaffNum(staffinfoNum);
+			dto.setPersonNum(personInfoNum);
+			dto.setDirectorName(staffFormPanel.getFldDirectorName().getText());
 
-		dto.setGender(staffFormPanel.getFldGender().getText());
-		if (!staffFormPanel.getFldBirthYear().getText().equals(null)) {
-			dto.setBirthYear(Integer.parseInt(staffFormPanel.getFldBirthYear().getText()));
+			dto.setGender(staffFormPanel.getFldGender().getText());
+			if (!staffFormPanel.getFldBirthYear().getText().equals(null)) {
+				dto.setBirthYear(Integer.parseInt(staffFormPanel.getFldBirthYear().getText()));
+			}
+			dto.setRepresentativeWork(staffFormPanel.getFldRepresentativeWork().getText());
+			dto.setMarriagePartner(staffFormPanel.getFldMarriagePartner().getText());
+		}catch(NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
-		dto.setRepresentativeWork(staffFormPanel.getFldRepresentativeWork().getText());
-		dto.setMarriagePartner(staffFormPanel.getFldMarriagePartner().getText());
+		
 	}
 
 	// 입력후 필드 리셋

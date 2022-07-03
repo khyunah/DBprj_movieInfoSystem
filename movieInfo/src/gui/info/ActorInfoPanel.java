@@ -289,30 +289,36 @@ public class ActorInfoPanel extends JPanel implements ActionListener {
 							&& !actorFormPanel.getFldatorTall().getText().equals("")
 							&& !actorFormPanel.getFldActorWieght().getText().equals("")) {
 
-						String removeTrimActorName = actorFormPanel.getFldActorName().getText();
-						int actorBirthYear = Integer.parseInt(actorFormPanel.getFldActorBirthYear().getText());
-						
-						boolean doubleCheck = actorDao.selectActorDoubleCheck(removeTrimActorName, actorBirthYear);
+						try {
+							String removeTrimActorName = actorFormPanel.getFldActorName().getText();
+							int actorBirthYear = Integer.parseInt(actorFormPanel.getFldActorBirthYear().getText());
+							
+							boolean doubleCheck = actorDao.selectActorDoubleCheck(removeTrimActorName, actorBirthYear);
 
-						if (!doubleCheck) {
+							if (!doubleCheck) {
 
-							ActorInfoDto dto = new ActorInfoDto();
-							addDtoActorInfo(dto);
-							int insertCheck = actorDao.insertActorInfo(dto);
+								ActorInfoDto dto = new ActorInfoDto();
+								addDtoActorInfo(dto);
+								int insertCheck = actorDao.insertActorInfo(dto);
 
-							if (insertCheck == 1) {
-								JOptionPane.showMessageDialog(null, "배우정보 등록이 완료되었습니다.", "INFORMATION",
-										JOptionPane.INFORMATION_MESSAGE);
+								if (insertCheck == 1) {
+									JOptionPane.showMessageDialog(null, "배우정보 등록이 완료되었습니다.", "INFORMATION",
+											JOptionPane.INFORMATION_MESSAGE);
 
-								resetActorInfoTextField();
+									resetActorInfoTextField();
 
+								} else {
+									JOptionPane.showMessageDialog(null, "배우 정보 등록이 정상적으로 처리되지 않았습니다.", "ERROR",
+											JOptionPane.ERROR_MESSAGE);
+								}
 							} else {
-								JOptionPane.showMessageDialog(null, "배우 정보 등록이 정상적으로 처리되지 않았습니다.", "ERROR",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(null, "입력하신 정보의 배우가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
 							}
-						} else {
-							JOptionPane.showMessageDialog(null, "입력하신 정보의 배우가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
+						} catch(NumberFormatException n) {
+							JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR",
+									JOptionPane.ERROR_MESSAGE);
 						}
+												
 					} else {
 						JOptionPane.showMessageDialog(null, "배우 이름을 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 					}
@@ -342,18 +348,23 @@ public class ActorInfoPanel extends JPanel implements ActionListener {
 	
 	// ActorInfo 정보를 ActorInfoDto로 밀어 넣는 메소드 ( insert, update 에서 사용 )
 		private void addDtoActorInfo(ActorInfoDto dto) {
-			dto.setActorNum(actcorNum);
-			dto.setActorName(actorFormPanel.getFldActorName().getText());
+			try {
+				dto.setActorNum(actcorNum);
+				dto.setActorName(actorFormPanel.getFldActorName().getText());
 
-			dto.setRepresentativeMovie(actorFormPanel.getFldActorRepresentativeMovie().getText());
-			dto.setRepresentativeRole(actorFormPanel.getFldActorRepresentativeRole().getText());
+				dto.setRepresentativeMovie(actorFormPanel.getFldActorRepresentativeMovie().getText());
+				dto.setRepresentativeRole(actorFormPanel.getFldActorRepresentativeRole().getText());
 
-			dto.setBirthYear(actorFormPanel.getFldActorBirthYear().getText());
-			dto.setActorTall(actorFormPanel.getFldatorTall().getText());
-			dto.setActorWeight(actorFormPanel.getFldActorWieght().getText());
-			dto.setGender(actorFormPanel.getFldActorGender().getText());
+				dto.setBirthYear(actorFormPanel.getFldActorBirthYear().getText());
+				dto.setActorTall(actorFormPanel.getFldatorTall().getText());
+				dto.setActorWeight(actorFormPanel.getFldActorWieght().getText());
+				dto.setGender(actorFormPanel.getFldActorGender().getText());
 
-			dto.setMarriagePartner(actorFormPanel.getFldActorMarriagePartner().getText());
+				dto.setMarriagePartner(actorFormPanel.getFldActorMarriagePartner().getText());
+			} catch(NumberFormatException n) {
+				JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 		// 입력후 필드 리셋
