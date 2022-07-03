@@ -132,8 +132,11 @@ public class StaffInfoDao implements IStaffService {
 			preparedStatement.setInt(3, dto.getBirthYear());
 			preparedStatement.setString(4, dto.getMarriagePartner());
 			preparedStatement.setInt(5, dto.getPersonNum());
-			result = preparedStatement.executeUpdate();
-
+			try {
+				result = preparedStatement.executeUpdate();
+			} catch(SQLException s) {
+				return -1;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

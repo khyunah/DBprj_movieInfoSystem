@@ -212,15 +212,17 @@ public class MovieInfoDao implements IMovieService {
 		try {
 			// UPDATE
 			// 테이블 - movieInfo / 영화이름, 감독
-			System.out.println(movieinfoNum);
 			String updateQuery = "UPDATE movieinfo SET movieTitle = ? , directorName = ? WHERE movieinfoNum = ?";
 			preparedStatement = connection.prepareStatement(updateQuery);
 			preparedStatement.setString(1, dto.getMovieTitle());
 			preparedStatement.setString(2, dto.getDirectorName());
 			System.out.println(dto.getMovieTitle());
 			preparedStatement.setInt(3, movieinfoNum);
-			result = preparedStatement.executeUpdate();
-			System.out.println(result);
+			try {
+				result = preparedStatement.executeUpdate();
+			} catch(SQLException s) {
+				return -1;
+			}
 
 			// UPDATE
 			// 테이블 - movieReleaseInfo / movieinfoNum, 개봉연도, 개봉월

@@ -211,8 +211,11 @@ public class ActorDao implements IActorService {
 			preparedStatement.setString(5, dto.getActorWeight());
 			preparedStatement.setString(6, dto.getMarriagePartner());
 			preparedStatement.setInt(7, personNum);
-			result = preparedStatement.executeUpdate();
-			System.out.println(result);
+			try {
+				result = preparedStatement.executeUpdate();
+			} catch(SQLException s) {
+				return -1;
+			}
 
 			// UPDATE
 			// 테이블 - actorInfo / 대표작품, 대표역할

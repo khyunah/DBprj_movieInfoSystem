@@ -27,9 +27,9 @@ import gui.detail.MovieInfoDetailFrame;
 public class MovieInfoPanel extends JPanel implements ActionListener {
 
 	private MovieInfoDao movieDao;
-	
+
 	private int movieinfoNum;
-	
+
 	// 영화 패널 부분
 	private JLabel lblMovieInfo;
 	private MovieFormPanel movieFormPanel = new MovieFormPanel();
@@ -43,18 +43,18 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 	private JButton btnDeleteMovie;
 	private JButton btnUpdateMovie;
 	private JButton btnInsertMovie;
-	
+
 	private Vector<MovieInfoDto> vcMovie = new Vector<>();
 	private JList<MovieInfoDto> movieInfoJList = new JList<>();
-	
+
 	private MovieInfoMainFrame context;
-	
+
 	public MovieInfoPanel(MovieInfoMainFrame context) {
 		this.context = context;
 		initData();
 		addEventListener();
 	}
-	
+
 	private void initData() {
 		// 영화 부분
 		setBounds(23, 23, 747, 332);
@@ -108,7 +108,7 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 		btnDeleteMovie.setBackground(Color.WHITE);
 		add(btnDeleteMovie);
 	}
-	
+
 	private void addEventListener() {
 		// 영화정보 관련 이벤트
 		btnMovieSearch.addActionListener(this);
@@ -147,12 +147,12 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 			}
 		});
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// 기능 DAO
 		movieDao = new MovieInfoDao();
-		
+
 		// Movie Search 버튼
 		if (e.getSource() == btnMovieSearch) {
 
@@ -185,12 +185,9 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 
 			Vector<MovieInfoDto> selectAllMovieInfoResult = movieDao.selectAllMovieInfo();
 
-			
-			
 			for (int i = 0; i < selectAllMovieInfoResult.size(); i++) {
 				vcMovie.add(selectAllMovieInfoResult.get(i));
 			}
-			
 
 			movieInfoJList.setListData(vcMovie);
 			movieScrollPane.add(movieInfoJList);
@@ -200,10 +197,10 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 
 		// Movie Insert 버튼
 		else if (e.getSource() == btnInsertMovie) {
-			
+
 			resetMovieInfoTextField();
 
-			if(context.getJtab().getTabCount() == 2) {
+			if (context.getJtab().getTabCount() == 2) {
 				context.getJtab().removeTabAt(1);
 			}
 
@@ -250,8 +247,8 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 				movieinfoNum = dto.getMovieInfoNum();
 
 				movieInfoJList.setSelectedValue(null, false);
-				
-				if(context.getJtab().getTabCount() == 2) {
+
+				if (context.getJtab().getTabCount() == 2) {
 					context.getJtab().removeTabAt(1);
 				}
 
@@ -295,10 +292,8 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 
 		// MovieInfoPanel - 영화정보 등록하기 버튼
 		else if (e.getSource() == movieFormPanel.getBtnInsertMovieInfo()) {
-			
 
 			// 패널에 있는 텍스트 필드에 전부 입력을 했는지 체크하는 과정
-			
 			if (!movieFormPanel.getFldMovieTitle().getText().equals("")
 					&& !movieFormPanel.getFldDirectorName().getText().equals("")
 					&& !movieFormPanel.getFldTotalIncome().getText().equals("")
@@ -309,8 +304,8 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 
 				String removeTrimMovieTitle = removeTrim(movieFormPanel.getFldMovieTitle().getText());
 				String removeTrimDirectorName = removeTrim(movieFormPanel.getFldDirectorName().getText());
-				
-				boolean doubleCheck = movieDao.selectMovieDoubleCheck(removeTrimMovieTitle,	removeTrimDirectorName);
+
+				boolean doubleCheck = movieDao.selectMovieDoubleCheck(removeTrimMovieTitle, removeTrimDirectorName);
 
 				// 중복이 아닐때 true
 				if (doubleCheck) {
@@ -349,29 +344,33 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 					&& !movieFormPanel.getFldReleaseMonth().getText().equals("")) {
 
 				MovieInfoDto dto = new MovieInfoDto();
-				addDtoMovieInfo(dto);
-				int updateCheck = movieDao.updateMovieInfo(movieinfoNum, dto);
+				try {
+					addDtoMovieInfo(dto);
+					int updateCheck = movieDao.updateMovieInfo(movieinfoNum, dto);
 
-				if (updateCheck == 1) {
-					JOptionPane.showMessageDialog(null, "영화 정보 업데이트가 정상적으로 완료되었습니다.", "INFORMATION",
-							JOptionPane.INFORMATION_MESSAGE);
-					resetMovieInfoTextField();
+					if (updateCheck == 1) {
+						JOptionPane.showMessageDialog(null, "영화 정보 업데이트가 정상적으로 완료되었습니다.", "INFORMATION",
+								JOptionPane.INFORMATION_MESSAGE);
+						resetMovieInfoTextField();
 
-				} else {
-					JOptionPane.showMessageDialog(null, "영화 정보 업데이트가 정상적으로 처리되지 않았습니다", "ERROR",
-							JOptionPane.ERROR_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (NumberFormatException n) {
+					JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
+
 			} else {
 				JOptionPane.showMessageDialog(null, "영화이름, 감독, 매출액, 관객수, 평점, 개봉연도, 개봉월은 빈칸없이 입력해주세요", "ERROR",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private String removeTrim(String keyword) {
 		return keyword.replace(" ", "");
 	}
-	
+
 	// 입력후 필드 리셋
 	private void resetMovieInfoTextField() {
 		movieFormPanel.getFldMovieTitle().setText(null);
@@ -389,30 +388,26 @@ public class MovieInfoPanel extends JPanel implements ActionListener {
 		movieFormPanel.getFldReview2().setText(null);
 		movieFormPanel.getFldReview3().setText(null);
 	}
-	
+
 	// MovieInfo 정보를 MovieInfoDto로 밀어 넣는 메소드 ( insert, update 에서 사용 )
 	private void addDtoMovieInfo(MovieInfoDto dto) {
-		try {
-			dto.setMovieTitle(movieFormPanel.getFldMovieTitle().getText());
-			dto.setDirectorName(movieFormPanel.getFldDirectorName().getText());
 
-			dto.setReleaseYear(Integer.parseInt(movieFormPanel.getFldReleaseYear().getText()));
-			dto.setReleaseMonth(Integer.parseInt(movieFormPanel.getFldReleaseMonth().getText()));
+		dto.setMovieTitle(movieFormPanel.getFldMovieTitle().getText());
+		dto.setDirectorName(movieFormPanel.getFldDirectorName().getText());
 
-			dto.setMoviePlot(movieFormPanel.getFldMoviePlot().getText());
+		dto.setReleaseYear(Integer.parseInt(movieFormPanel.getFldReleaseYear().getText()));
+		dto.setReleaseMonth(Integer.parseInt(movieFormPanel.getFldReleaseMonth().getText()));
 
-			dto.setTotalIncome(Integer.parseInt(movieFormPanel.getFldTotalIncome().getText()));
-			dto.setAudience(Integer.parseInt(movieFormPanel.getFldAudience().getText()));
-			dto.setRating(Float.parseFloat((movieFormPanel.getFldRating().getText())));
+		dto.setMoviePlot(movieFormPanel.getFldMoviePlot().getText());
 
-			dto.setReview1(movieFormPanel.getFldReview1().getText());
-			dto.setReview2(movieFormPanel.getFldReview2().getText());
-			dto.setReview3(movieFormPanel.getFldReview3().getText());
-		} catch(NumberFormatException n) {
-			JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		
+		dto.setTotalIncome(Integer.parseInt(movieFormPanel.getFldTotalIncome().getText()));
+		dto.setAudience(Integer.parseInt(movieFormPanel.getFldAudience().getText()));
+		dto.setRating(Float.parseFloat((movieFormPanel.getFldRating().getText())));
+
+		dto.setReview1(movieFormPanel.getFldReview1().getText());
+		dto.setReview2(movieFormPanel.getFldReview2().getText());
+		dto.setReview3(movieFormPanel.getFldReview3().getText());
+
 	}
 
 }

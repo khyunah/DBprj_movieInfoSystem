@@ -28,7 +28,7 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 
 	private MovieInfoMainFrame context;
 	private StaffInfoDao staffDao;
-	
+
 	private JLabel lblStaffInfo;
 	private StaffFormPanel staffFormPanel = new StaffFormPanel();
 
@@ -46,13 +46,13 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 
 	private int staffinfoNum;
 	private int personInfoNum;
-	
+
 	public StaffInfoPanel(MovieInfoMainFrame context) {
 		this.context = context;
 		initData();
 		addEventListener();
 	}
-	
+
 	private void initData() {
 		// 스태프 부분
 		setBounds(428, 407, 342, 332);
@@ -102,7 +102,7 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 		btnDeleteStaff.setBounds(38, 293, 100, 21);
 		add(btnDeleteStaff);
 	}
-	
+
 	private void addEventListener() {
 		// 스태프 정보 관련 이벤트
 		btnSearchStaff.addActionListener(this);
@@ -139,7 +139,7 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 			}
 		});
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		staffDao = new StaffInfoDao();
@@ -155,7 +155,7 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 				vcStaff.removeAllElements();
 
 				String removeTrimStaffName = removeTrim(fldSearchStaff.getText());
-				
+
 				Vector<StaffInfoDto> selectDirectorNameResult = staffDao.selectDirectorName(removeTrimStaffName);
 
 				for (int i = 0; i < selectDirectorNameResult.size(); i++) {
@@ -195,10 +195,10 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 			staffFormPanel.getBtnInsertStaffInfo().setEnabled(true);
 			staffFormPanel.getBtnUpdateStaffInfo().setEnabled(false);
 
-			if(context.getJtab().getTabCount() == 2) {
+			if (context.getJtab().getTabCount() == 2) {
 				context.getJtab().removeTabAt(1);
 			}
-			
+
 			context.getJtab().addTab("Staff", null, staffFormPanel, null);
 			context.getJtab().setSelectedComponent(staffFormPanel);
 
@@ -229,8 +229,8 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 				personInfoNum = dto.getPersonNum();
 
 				staffJlist.setSelectedValue(null, false);
-				
-				if(context.getJtab().getTabCount() == 2) {
+
+				if (context.getJtab().getTabCount() == 2) {
 					context.getJtab().removeTabAt(1);
 				}
 
@@ -252,9 +252,9 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 				if (vcStaff.size() != 0) {
 
 					String rempceTrimDirectorName = removeTrim(staffJlist.getSelectedValue().getDirectorName());
-					
-					boolean doubleCheck = staffDao.selectStaffInfoDoubleCheck(
-							rempceTrimDirectorName, staffJlist.getSelectedValue().getBirthYear());
+
+					boolean doubleCheck = staffDao.selectStaffInfoDoubleCheck(rempceTrimDirectorName,
+							staffJlist.getSelectedValue().getBirthYear());
 
 					if (!doubleCheck) {
 
@@ -287,7 +287,7 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 					&& !staffFormPanel.getFldDirectorName().getText().equals("")
 					&& !staffFormPanel.getFldGender().getText().equals("")
 					&& !staffFormPanel.getFldRepresentativeWork().getText().equals("")) {
-				
+
 				String removeTrimDirectorName = removeTrim(staffFormPanel.getFldDirectorName().getText());
 
 				boolean doubleCheck = false;
@@ -309,10 +309,10 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 					} else {
 						JOptionPane.showMessageDialog(null, "입력하신 감독정보가 이미 존재합니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
 					}
-				} catch(NumberFormatException n) {
+				} catch (NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
-				
+
 			} else {
 				JOptionPane.showMessageDialog(null, "빈칸을 전부 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 			}
@@ -328,44 +328,47 @@ public class StaffInfoPanel extends JPanel implements ActionListener {
 					&& !staffFormPanel.getFldRepresentativeWork().getText().equals("")) {
 
 				StaffInfoDto dto = new StaffInfoDto();
-				addDtoStaffInfo(dto);
-				int updateCheck = staffDao.updateStaffInfo(staffinfoNum, dto);
 
-				if (updateCheck == 1) {
-					JOptionPane.showMessageDialog(null, "업데이트가 완료되었습니다.", "INFORMATION",
-							JOptionPane.INFORMATION_MESSAGE);
-					resetStaffInfoTextField();
+				try {
+					addDtoStaffInfo(dto);
+					int updateCheck = staffDao.updateStaffInfo(staffinfoNum, dto);
 
-				} else {
-					JOptionPane.showMessageDialog(null, "업데이트가 정상적으로 처리되지 않았습니다", "ERROR", JOptionPane.ERROR_MESSAGE);
+					if (updateCheck == 1) {
+						JOptionPane.showMessageDialog(null, "업데이트가 완료되었습니다.", "INFORMATION",
+								JOptionPane.INFORMATION_MESSAGE);
+						resetStaffInfoTextField();
+
+					} else {
+						JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (NumberFormatException n) {
+					JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
+
 			} else {
 				JOptionPane.showMessageDialog(null, "빈칸을 전부 입력해주세요", "ERROR", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private String removeTrim(String keyword) {
 		return keyword.replace(" ", "");
 	}
 
 	// StaffInfo 정보를 StaffInfoDto로 밀어 넣는 메소드 ( insert, update 에서 사용 )
 	private void addDtoStaffInfo(StaffInfoDto dto) {
-		try {
-			dto.setStaffNum(staffinfoNum);
-			dto.setPersonNum(personInfoNum);
-			dto.setDirectorName(staffFormPanel.getFldDirectorName().getText());
 
-			dto.setGender(staffFormPanel.getFldGender().getText());
-			if (!staffFormPanel.getFldBirthYear().getText().equals(null)) {
-				dto.setBirthYear(Integer.parseInt(staffFormPanel.getFldBirthYear().getText()));
-			}
-			dto.setRepresentativeWork(staffFormPanel.getFldRepresentativeWork().getText());
-			dto.setMarriagePartner(staffFormPanel.getFldMarriagePartner().getText());
-		}catch(NumberFormatException e) {
-			JOptionPane.showMessageDialog(null, "입력을 올바르게 해주세요.", "ERROR", JOptionPane.ERROR_MESSAGE);
+		dto.setStaffNum(staffinfoNum);
+		dto.setPersonNum(personInfoNum);
+		dto.setDirectorName(staffFormPanel.getFldDirectorName().getText());
+
+		dto.setGender(staffFormPanel.getFldGender().getText());
+		if (!staffFormPanel.getFldBirthYear().getText().equals(null)) {
+			dto.setBirthYear(Integer.parseInt(staffFormPanel.getFldBirthYear().getText()));
 		}
-		
+		dto.setRepresentativeWork(staffFormPanel.getFldRepresentativeWork().getText());
+		dto.setMarriagePartner(staffFormPanel.getFldMarriagePartner().getText());
+
 	}
 
 	// 입력후 필드 리셋
