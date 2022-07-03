@@ -1,4 +1,4 @@
-package gui;
+package gui.info;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -20,6 +20,9 @@ import javax.swing.JTextField;
 
 import dao.ActorDao;
 import dto.ActorInfoDto;
+import gui.MovieInfoMainFrame;
+import gui.detail.ActorInfoDetailFrame;
+import gui.form.ActorFormPanel;
 
 public class ActorInfoPanel extends JPanel implements ActionListener {
 

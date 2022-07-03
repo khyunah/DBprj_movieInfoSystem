@@ -1,4 +1,4 @@
-package gui;
+package gui.form;
 
 import java.awt.Color;
 

@@ -28,6 +28,9 @@ import dao.StaffInfoDao;
 import dto.ActorInfoDto;
 import dto.MovieInfoDto;
 import dto.StaffInfoDto;
+import gui.info.ActorInfoPanel;
+import gui.info.MovieInfoPanel;
+import gui.info.StaffInfoPanel;
 import lombok.Data;
 
 @Data
